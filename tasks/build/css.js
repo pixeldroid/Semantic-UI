@@ -72,7 +72,6 @@ module.exports = function(callback) {
     .pipe(less(settings.less))
     .pipe(autoprefixer(settings.prefix))
     .pipe(replace(comments.variables.in, comments.variables.out))
-    .pipe(replace(comments.license.in, comments.license.out))
     .pipe(replace(comments.large.in, comments.large.out))
     .pipe(replace(comments.small.in, comments.small.out))
     .pipe(replace(comments.tiny.in, comments.tiny.out))
@@ -86,6 +85,7 @@ module.exports = function(callback) {
   // uncompressed component css
   uncompressedStream
     .pipe(plumber())
+    .pipe(replace(comments.license.in, comments.license.out))
     .pipe(replace(assets.source, assets.uncompressed))
     .pipe(gulpif(config.hasPermission, chmod(config.permission)))
     .pipe(gulp.dest(output.uncompressed))
@@ -99,6 +99,7 @@ module.exports = function(callback) {
   compressedStream = stream
     .pipe(plumber())
     .pipe(clone())
+    .pipe(replace(comments.license.in, ''))
     .pipe(replace(assets.source, assets.compressed))
     .pipe(minifyCSS(settings.minify))
     .pipe(rename(settings.rename.minCSS))
